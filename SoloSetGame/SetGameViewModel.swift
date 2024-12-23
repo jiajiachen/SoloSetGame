@@ -9,7 +9,46 @@ import Foundation
 
 import SwiftUI
 
-class SetGame {
+class SetGameViewModel: ObservableObject {
+    typealias Card = SetGameModel.Card
     
+    private static func createSetGame() -> SetGameModel {
+
+        return SetGameModel()
+    }
+    
+    @Published private var model = createSetGame()
+    
+    func startNewGame() {
+        resumeScore()
+        model = SetGameViewModel.createSetGame()
+    }
+    
+    func dealCards() {
+        model.dealCards()
+    }
+    
+    func choose(_ card: Card) {
+        model.choose(card)
+    }
+    
+    var cards: Array<Card> {
+        return model.dealtCards
+    }
+    
+
+    
+    var dealCardList: Array<Card> {
+        return model.cards
+
+    }
+    
+    var score: Int {
+        return model.score
+    }
+    
+    func resumeScore() {
+        model.resumeScore()
+    }
     
 }

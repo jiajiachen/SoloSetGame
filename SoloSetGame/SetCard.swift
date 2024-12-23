@@ -6,3 +6,13 @@
 //
 
 import Foundation
+import SwiftUI
+
+struct SetCard {
+    var number: Int
+    var shape: String
+    var shading: String
+    var color: Color
+    var isSelected: Bool
+    var isMatched: Bool
+}
