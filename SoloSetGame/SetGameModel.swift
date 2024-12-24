@@ -78,26 +78,35 @@ struct SetGameModel {
         var fillColor: Color = .orange
         var isInDeck: Bool = true
     }
-    
-    enum CardNumber: CaseIterable {
-        case one
-        case two
-        case three
-    }
-    enum CardColor: CaseIterable {
-        case green
-        case purple
-        case red
-    }
-    enum CardShape: CaseIterable {
-        case diamond
-        case squiggle
-        case oval
-    }
-    enum CardShading: CaseIterable {
-        case solid
-        case striped
-        case open
-    }
 
+
+}
+
+enum CardNumber:Int, CaseIterable {
+    case one = 1
+    case two = 2
+    case three = 3
+}
+enum CardColor: CaseIterable {
+    case green
+    case purple
+    case red
+    func toColor() -> Color {
+          switch self {
+          case .green: return .green
+          case .purple: return .purple
+          case .red: return .red
+          }
+      }
+    
+}
+enum CardShape: CaseIterable {
+    case diamond
+    case squiggle
+    case oval
+}
+enum CardShading: CaseIterable {
+    case solid
+    case striped
+    case open
 }

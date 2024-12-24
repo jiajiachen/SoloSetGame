@@ -102,6 +102,8 @@ struct CardView: View {
         self.card = card
     }
     
+    
+    
     var body: some View {
         ZStack {
             let base = RoundedRectangle(cornerRadius: 8)
@@ -109,31 +111,14 @@ struct CardView: View {
                base.foregroundStyle(.white)
                base.strokeBorder(lineWidth: 2)
                base.overlay {
-//                   VStack(spacing: 8) {
-//                       ForEach(0..<3) { _ in
-//                           Capsule()
-//                                .fill(Color.pink)
-//                           
-//                           
-//                      }
-//                   }.padding(6)
-//                   Diamond()
-//                       .stroke(Color.green, lineWidth: 1)
-//                       .frame(width: 26, height: 16)
-                 
-                       
-                   ZStack {
-                       Squiggle()
-                           .stroke(Color.blue.opacity(0.5), lineWidth: 1)
-//
-//                             ForEach(0..<50) { index in
-//                                 Rectangle()
-//                                     .fill(Color.white) // 纹理颜色
-//                                     .frame(width: 2, height: 20)
-//                                     .offset(x: CGFloat(index * 5), y: 0)
-//                                     
-//                             }
-                         }.frame(width: 20, height: 20)
+
+                 VStack(spacing: 8) {
+                     ForEach(0..<card.number.rawValue) { _ in
+                         applyShading(to:getShape(card))
+
+                     }
+                  }.padding(6)
+                  
 
                 }
             }
@@ -142,7 +127,57 @@ struct CardView: View {
         .foregroundStyle(card.fillColor)
 
     }
+    
+    @ViewBuilder
+    func applyShading(to shape: some Shape) -> some View {
+//        var content = getShape(card)
+        let color = card.color.toColor()
+        switch card.shading {
+        case .solid:
+            shape.fill(color)
+        case .striped:
+            shape.stroke(color)
+                .overlay(
+                    shape
+                        .fill(color)
+                        .mask(StripedPattern(use: color))
+                )
+        case .open:
+            shape.stroke(color, lineWidth: 2)
+        }
+    }
 }
+
+struct StripedPattern: View {
+    var color: Color
+    init(use color: Color) {
+        self.color = color
+    }
+    var body: some View {
+        GeometryReader { geometry in
+            Path { path in
+                stride(from: 0, to: geometry.size.width, by: 4).forEach { x in
+                    path.move(to: CGPoint(x: x, y: 0))
+                    path.addLine(to: CGPoint(x: x, y: geometry.size.height))
+                }
+            }
+            .stroke(color, lineWidth: 1)
+        }
+    }
+}
+
+func getShape(_ card: SetGameModel.Card) -> some Shape {
+    switch card.shape {
+    case CardShape.diamond:
+        return Diamond().path(in: CGRect(x: 0, y: 0, width: 50, height: 75))
+    case CardShape.squiggle:
+        return Rectangle().path(in: CGRect(x: 0, y: 0, width: 50, height: 75))
+    case CardShape.oval:
+        return Capsule().path(in: CGRect(x: 0, y: 0, width: 50, height: 75))
+    }
+}
+
+
 
 struct Diamond: Shape {
     func path(in rect: CGRect) -> Path {
@@ -158,29 +193,7 @@ struct Diamond: Shape {
     }
 }
 
-struct Squiggle: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: CGPoint(x: rect.minX, y: rect.height/3))
-               
-       let width = rect.width
-       let height = rect.height
-       let spacing = width / 4
-       
-       path.addCurve(
-        to: CGPoint(x: rect.maxX * 4/5, y: rect.minY),
-        control1: CGPoint(x: spacing, y: -rect.height * 1/4),
-        control2: CGPoint(x: rect.width / 2, y: rect.height * 3 / 4)
-       )
-//        path.addCurve(
-//            to: CGPoint(x: rect.minX, y: rect.midY),
-//            control1: CGPoint(x: width - spacing, y: rect.maxY + rect.height / 2),
-//            control2: CGPoint(x: spacing, y: rect.maxY)
-//        )
-        //path.closeSubpath()
-        return path
-    }
-}
+
 
 #Preview {
     SetGameView(viewModel: SetGameViewModel())
