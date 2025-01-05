@@ -46,12 +46,15 @@ struct SetGameView: View {
             
             LazyVGrid(columns: [GridItem(.adaptive(minimum: gridItemSize), spacing: 0)], spacing: 0) {
                 ForEach(viewModel.cards) { card in
-                    CardView(card)
-                        .padding(4)
-                        .aspectRatio(2/3, contentMode: .fit)
-                        .onTapGesture {
-                            viewModel.choose(card)
-                        }
+                    
+                        CardView(card)
+                            .padding(4)
+                            .aspectRatio(2/3, contentMode: .fit)
+                            .onTapGesture {
+                                viewModel.choose(card)
+                            }
+                    
+                  
                 
                 }
             }
@@ -59,6 +62,7 @@ struct SetGameView: View {
    
     }
     
+
     
     func startNewGame() {
         viewModel.startNewGame()
@@ -67,6 +71,10 @@ struct SetGameView: View {
     func dealCards() {
         viewModel.dealCards()
     }
+    
+
+    
+
     
     func gridItemWidthThatFits(
         count: Int,
@@ -101,30 +109,49 @@ struct CardView: View {
     init(_ card: SetGameModel.Card) {
         self.card = card
     }
-    
+    func getCardBackgroundColor() -> Color {
+       
+        if card.isMatched {
+            return .red
+            
+        } else if card.isThreeCardsUnMatched {
+            return .yellow
+        }
+        else {
+            return .white
+        }
+    }
     
     
     var body: some View {
         ZStack {
             let base = RoundedRectangle(cornerRadius: 8)
+                
             Group {
-               base.foregroundStyle(.white)
+                
+                base.foregroundStyle(getCardBackgroundColor())
                base.strokeBorder(lineWidth: 2)
-               base.overlay {
+             //  base.overlay {
 
                  VStack(spacing: 8) {
                      ForEach(0..<card.number.rawValue) { _ in
-                         applyShading(to:getShape(card))
+                       
+                             applyShading(to:getShape(card))
+                         
+                         
 
                      }
                   }.padding(6)
                   
-
-                }
+             
+               // }
+               // base.foregroundStyle(.white)
+               
             }
      
         }
-        .foregroundStyle(card.fillColor)
+        .foregroundStyle(card.isSelected ? Color.orange : Color.cyan) // dealtCards cards
+        
 
     }
     

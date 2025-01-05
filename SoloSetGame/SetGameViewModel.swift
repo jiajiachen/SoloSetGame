@@ -33,7 +33,7 @@ class SetGameViewModel: ObservableObject {
     }
     
     var cards: Array<Card> {
-        return model.dealtCards
+        return model.cards.filter { !$0.isInDeck && $0.show}
     }
     
 
