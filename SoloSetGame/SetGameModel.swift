@@ -41,7 +41,7 @@ struct SetGameModel {
     
     mutating func choose(_ card: Card) {
         if let chosenIndex = cards.firstIndex(where: { $0.id == card.id} ) {
-            print("card", chosenIndex, cards[chosenIndex].isSelected)
+           //print("card", chosenIndex, cards[chosenIndex].isSelected)
             
             let selectedCards = cards.filter { $0.isSelected}
             
@@ -71,7 +71,7 @@ struct SetGameModel {
                 cards[chosenIndex].isSelected = true
                 let selectedCards = cards.filter { $0.isSelected}
                 if selectedCards.count == 3 {
-                    let isMatched = false
+                    let isMatched = isValidSet(selectedCards)
                     
                     if (isMatched) {
                         for index in cards.indices {
@@ -97,23 +97,25 @@ struct SetGameModel {
         
     }
     
-//     func isValidSet(_ cards: [Card]) -> Bool {
-//        guard cards.count == 3 else { return false }
-//        
-//        // 检查每个特征是否符合 SET 规则：要么全部相同，要么全部不同
-//        return isValidFeature(cards.map { $0.shape }) &&
-//               isValidFeature(cards.map { $0.color }) &&
-//               isValidFeature(cards.map { $0.shading }) &&
-//               isValidFeature(cards.map { $0.number })
-//    }
-//    
-//    // 检查单个特征是否符合规则
-//    func isValidFeature<T: Equatable>(_ features: [T]) -> Bool {
-//         let uniqueFeatures = Set(features)
-//        // 要么全部相同（集合大小为1），要么全部不同（集合大小为3）
-//        return uniqueFeatures.count == 1 || uniqueFeatures.count == 3
-//    }
-//    
+    func isValidSet(_ cards: [Card]) -> Bool {
+        guard cards.count == 3 else { return false }
+        
+        // 检查每个特征是否符合 SET 规则：要么全部相同，要么全部不同
+        return isValidFeature(cards.map { $0.shape }) &&
+               isValidFeature(cards.map { $0.color }) &&
+               isValidFeature(cards.map { $0.shading }) &&
+               isValidFeature(cards.map { $0.number })
+        
+
+    }
+    
+    // 检查单个特征是否符合规则
+    func isValidFeature<T: Hashable>(_ features: [T]) -> Bool {
+         let uniqueFeatures = Set(features)
+        // 要么全部相同（集合大小为1），要么全部不同（集合大小为3）
+        return uniqueFeatures.count == 1 || uniqueFeatures.count == 3
+    }
+    
     mutating func dealCards() {
     
         let cards = cards.filter { $0.isInDeck }
