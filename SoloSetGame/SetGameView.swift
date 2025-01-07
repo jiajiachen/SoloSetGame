@@ -10,6 +10,8 @@ import SwiftUI
 struct SetGameView: View {
     @ObservedObject var viewModel: SetGameViewModel
     
+    let count = 0
+    
     var body: some View {
         VStack {
             Text("Set").font(.largeTitle)
@@ -25,7 +27,7 @@ struct SetGameView: View {
                 dealCards()
             } label: {
                 Text("Deal")
-            }
+            }.disabled(viewModel.cardsCountIndeck == 0)
             Spacer()
             Button {
                 startNewGame()
@@ -46,8 +48,7 @@ struct SetGameView: View {
             
             LazyVGrid(columns: [GridItem(.adaptive(minimum: gridItemSize), spacing: 0)], spacing: 0) {
                 ForEach(viewModel.cards) { card in
-                    
-                        CardView(card)
+                        CardView(card, gridItemSize)
                             .padding(4)
                             .aspectRatio(2/3, contentMode: .fit)
                             .onTapGesture {
@@ -106,8 +107,11 @@ struct CardView: View {
     
     let card: SetGameModel.Card
     
-    init(_ card: SetGameModel.Card) {
+    let gridItemSize: CGFloat
+    
+    init(_ card: SetGameModel.Card, _ gridItemSize: CGFloat) {
         self.card = card
+        self.gridItemSize = gridItemSize
     }
     func getCardBackgroundColor() -> Color {
        
@@ -133,13 +137,11 @@ struct CardView: View {
                base.strokeBorder(lineWidth: 2)
              //  base.overlay {
 
-                 VStack(spacing: 8) {
+                 VStack {
                      ForEach(0..<card.number.rawValue) { _ in
-                       
-                             applyShading(to:getShape(card))
-                         
-                         
-
+                         HStack {
+                             applyShading(to:getShape(card, gridItemSize))
+                         }
                      }
                   }.padding(6)
                   
@@ -193,14 +195,16 @@ struct StripedPattern: View {
     }
 }
 
-func getShape(_ card: SetGameModel.Card) -> some Shape {
+func getShape(_ card: SetGameModel.Card, _ gridItemSize: CGFloat) -> some Shape {
+    let height = gridItemSize / 3
+    let width = gridItemSize / 3 * 2
     switch card.shape {
     case CardShape.diamond:
-        return Diamond().path(in: CGRect(x: 0, y: 0, width: 50, height: 75))
+        return Diamond().path(in: CGRect(x: 0, y: 0, width: width, height: height))
     case CardShape.squiggle:
-        return Rectangle().path(in: CGRect(x: 0, y: 0, width: 50, height: 75))
+        return Rectangle().path(in: CGRect(x: 0, y: 0, width: width, height: height))
     case CardShape.oval:
-        return Capsule().path(in: CGRect(x: 0, y: 0, width: 50, height: 75))
+        return Capsule().path(in: CGRect(x: 0, y: 0, width: width, height: height))
     }
 }
 

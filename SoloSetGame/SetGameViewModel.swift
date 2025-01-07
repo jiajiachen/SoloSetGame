@@ -36,7 +36,9 @@ class SetGameViewModel: ObservableObject {
         return model.cards.filter { !$0.isInDeck && $0.show}
     }
     
-
+    var cardsCountIndeck: Int {
+        return model.cards.filter { $0.isInDeck }.count
+    }
     
     var dealCardList: Array<Card> {
         return model.cards

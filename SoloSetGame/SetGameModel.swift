@@ -47,13 +47,23 @@ struct SetGameModel {
             
             if selectedCards.count == 3 {
                 if selectedCards[0].isMatched {
-                    for index in cards.indices {
-                        if (cards[index].isSelected) {
-                            cards[index].isSelected = false
-                            cards[index].show = false
+                    let cardsInDeck = cards.filter { $0.isInDeck }
+                    
+                    for index in selectedCards.indices {
+                        if let cardIndex = cards.firstIndex(where: { $0.id ==  selectedCards[index].id}) {
+                            cards[cardIndex].isSelected = false
+                            cards[cardIndex].show = false
+                            let tempCard = cards[cardIndex]
+                            if let cardInDeckIndex = cards.firstIndex(where: { $0.id ==  cardsInDeck[index].id }) {
+                                cards[cardInDeckIndex].isInDeck = false
+                                cards[cardIndex] = cards[cardInDeckIndex]
+                                
+                                cards[cardInDeckIndex] = tempCard
+                            }
                         }
                     }
-                    dealCards()
+                   
+                   // dealCards()
                 } else if selectedCards[0].isThreeCardsUnMatched {
                     for index in cards.indices {
                         if (cards[index].isSelected) {
@@ -61,14 +71,14 @@ struct SetGameModel {
                             cards[index].isThreeCardsUnMatched = false
                         }
                     }
-                   
+                
+                    cards[chosenIndex].isSelected = true
+                    
                 }
                 
-                if cards[chosenIndex].show {
-                    cards[chosenIndex].isSelected = true
-                }
+               
             } else {
-                cards[chosenIndex].isSelected = true
+                cards[chosenIndex].isSelected = !cards[chosenIndex].isSelected
                 let selectedCards = cards.filter { $0.isSelected}
                 if selectedCards.count == 3 {
                     let isMatched = isValidSet(selectedCards)
@@ -79,6 +89,7 @@ struct SetGameModel {
                                 cards[index].isMatched = true
                             }
                         }
+                        score += 1
                     } else {
                         for index in cards.indices {
                             if (cards[index].isSelected) {
@@ -117,15 +128,34 @@ struct SetGameModel {
     }
     
     mutating func dealCards() {
-    
-        let cards = cards.filter { $0.isInDeck }
-        if cards.count > 0 {
-            for index in 0..<3 {
-                setCardDeal(cards[index])
-               // dealtCards.append(cards[index])
+        
+        let selectedCards = cards.filter { $0.isSelected}
+        let cardsInDeck = cards.filter { $0.isInDeck }
+        if selectedCards.count == 3 {
+            if selectedCards[0].isMatched {
+                for index in selectedCards.indices {
+                    if let cardIndex = cards.firstIndex(where: { $0.id ==  selectedCards[index].id}) {
+                        cards[cardIndex].isSelected = false
+                        cards[cardIndex].show = false
+                        let tempCard = cards[cardIndex]
+                        if let cardInDeckIndex = cards.firstIndex(where: { $0.id ==  cardsInDeck[index].id }) {
+                            cards[cardInDeckIndex].isInDeck = false
+                            cards[cardIndex] = cards[cardInDeckIndex]
+                            
+                            cards[cardInDeckIndex] = tempCard
+                        }
+                    }
+                }
+              
+            }
+        } else {
+            if cardsInDeck.count > 0 {
+                for index in 0..<3 {
+                    setCardDeal(cardsInDeck[index])
+                   // dealtCards.append(cards[index])
+                }
             }
         }
-      
     }
     
     mutating func setCardDeal(_ card: Card) {
