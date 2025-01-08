@@ -138,10 +138,17 @@ struct CardView: View {
              //  base.overlay {
 
                  VStack {
-                     ForEach(0..<card.number.rawValue) { _ in
+//                     ForEach(0..<card.number.rawValue) { _ in
+//                         HStack {
+//                             applyShading(to:getShape(card, gridItemSize))
+//                         }
+//                     }
+                     ForEach(Array(0..<card.number.rawValue), id: \.self) { _ in
                          HStack {
-                             applyShading(to:getShape(card, gridItemSize))
-                         }
+                             
+                              applyShading(to:getShape(card, gridItemSize))
+                           
+                          }
                      }
                   }.padding(6)
                   

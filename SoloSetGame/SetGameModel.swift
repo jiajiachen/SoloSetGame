@@ -46,24 +46,31 @@ struct SetGameModel {
             let selectedCards = cards.filter { $0.isSelected}
             
             if selectedCards.count == 3 {
+                
                 if selectedCards[0].isMatched {
+                    cards[chosenIndex].isSelected = true
                     let cardsInDeck = cards.filter { $0.isInDeck }
-                    
+                
                     for index in selectedCards.indices {
                         if let cardIndex = cards.firstIndex(where: { $0.id ==  selectedCards[index].id}) {
                             cards[cardIndex].isSelected = false
                             cards[cardIndex].show = false
-                            let tempCard = cards[cardIndex]
-                            if let cardInDeckIndex = cards.firstIndex(where: { $0.id ==  cardsInDeck[index].id }) {
-                                cards[cardInDeckIndex].isInDeck = false
-                                cards[cardIndex] = cards[cardInDeckIndex]
-                                
-                                cards[cardInDeckIndex] = tempCard
+                            
+                            if cardsInDeck.count > 0 {
+                                let tempCard = cards[cardIndex]
+                                if let cardInDeckIndex = cards.firstIndex(where: { $0.id ==  cardsInDeck[index].id }) {
+                                    cards[cardInDeckIndex].isInDeck = false
+                                    cards[cardIndex] = cards[cardInDeckIndex]
+                                    
+                                    cards[cardInDeckIndex] = tempCard
+                                }
                             }
+                          
                         }
                     }
                    
                    // dealCards()
+                    
                 } else if selectedCards[0].isThreeCardsUnMatched {
                     for index in cards.indices {
                         if (cards[index].isSelected) {
@@ -131,8 +138,8 @@ struct SetGameModel {
         
         let selectedCards = cards.filter { $0.isSelected}
         let cardsInDeck = cards.filter { $0.isInDeck }
-        if selectedCards.count == 3 {
-            if selectedCards[0].isMatched {
+        if selectedCards.count == 3 && selectedCards[0].isMatched {
+           
                 for index in selectedCards.indices {
                     if let cardIndex = cards.firstIndex(where: { $0.id ==  selectedCards[index].id}) {
                         cards[cardIndex].isSelected = false
@@ -147,7 +154,7 @@ struct SetGameModel {
                     }
                 }
               
-            }
+            
         } else {
             if cardsInDeck.count > 0 {
                 for index in 0..<3 {
